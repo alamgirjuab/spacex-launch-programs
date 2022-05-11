@@ -64,12 +64,22 @@
     grid-row-gap: 10px;
 }
 
-.btn-set button, .btn-grid button{
+.non-active-color{
     width: 80px;
     height: 30px;
     background: #C5E09D;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.active-color{
+    width: 80px;
+    height: 30px;
+    background: #7CBA01;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .btn-set button:hover, .btn-grid button:hover{

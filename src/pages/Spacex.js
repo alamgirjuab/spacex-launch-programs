@@ -3,13 +3,26 @@ import './Spacex.css';
 
 const Spacex = () => {
     const [data, setData] = useState([]);
+    const [years, setYears] = useState([]);
+    const [selected, setSelected] = useState('');
     const [launch, setLaunch] = useState([]);
     const [land, setLand] = useState([]);
 
     useEffect(() => {
         fetch('https://api.spacexdata.com/v3/launches?limit=100')
             .then(res => res.json())
-            .then(data => setData(data));
+            .then(data => {
+                setData(data);
+                let uniqueYears = [];
+                for (let i = 0; i < data.length; i++) {
+                    const element = data[i];
+                    if (!uniqueYears.includes(element.launch_year)) {
+                        uniqueYears.push(element.launch_year)
+                    }
+                }
+                setYears(uniqueYears);
+            });
+
     }, []);
 
     const launchTrueFalse = data => {
@@ -31,11 +44,11 @@ const Spacex = () => {
         return status;
     }
 
-    const uniqueYear = data.map(yearBtn => yearBtn?.launch_year)
-
-    const distinctYear = () => {
-        const year = [...new Set(uniqueYear)];
-        return year;
+    const yearValuePicker = yearValue => {
+        setSelected(yearValue);
+        fetch(`https://api.spacexdata.com/v3/launches?limit=100&launch_year=${parseInt(yearValue)}`)
+            .then(res => res.json())
+            .then(data => setData(data));
     }
 
     // console.log(launch);
@@ -50,7 +63,11 @@ const Spacex = () => {
                     <div className="btn-wraper">
                         <div className="btn-grid">
                             {
-                                distinctYear().map(yearBtn => <button>{yearBtn}</button>)
+                                years.map(yearBtn => <button className={
+                                    selected === yearBtn
+                                        ? "active-color"
+                                        : "non-active-color"
+                                } onClick={() => yearValuePicker(yearBtn)}>{yearBtn}</button>)
                             }
                         </div>
                     </div>
