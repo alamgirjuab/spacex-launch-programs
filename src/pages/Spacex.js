@@ -8,6 +8,10 @@ const Spacex = () => {
     const [launch, setLaunch] = useState([]);
     const [land, setLand] = useState([]);
 
+    /*-------------------------------- 
+     | Fetching default loading data |
+     -------------------------------*/
+
     useEffect(() => {
         fetch('https://api.spacexdata.com/v3/launches?limit=100')
             .then(res => res.json())
@@ -25,11 +29,45 @@ const Spacex = () => {
 
     }, []);
 
+    /*------------------------------------------------------ 
+     | Checking Launch Success condition and fetching data |
+     -----------------------------------------------------*/
+
     const launchTrueFalse = data => {
-        return setLaunch(data);
+        if (data === true) {
+            setLaunch(true);
+            fetch(`https://api.spacexdata.com/v3/launches?limit=100&launch_success=true`)
+                .then(res => res.json())
+                .then(data => setData(data));
+        } else {
+            setLaunch(false);
+            fetch(`https://api.spacexdata.com/v3/launches?limit=100&launch_success=false`)
+                .then(res => res.json())
+                .then(data => setData(data));
+        }
     }
 
-    // console.log(data);
+    /*------------------------------------------------------ 
+     | Checking Land Success condition and fetching data |
+     -----------------------------------------------------*/
+
+    const landTrueFalse = data => {
+        if (data === true) {
+            setLand(true);
+            fetch(`https://api.spacexdata.com/v3/launches?limit=100&launch_success=true&land_success=true`)
+                .then(res => res.json())
+                .then(data => setData(data));
+        } else {
+            setLand(false);
+            fetch(`https://api.spacexdata.com/v3/launches?limit=100&launch_success=true&land_success=false`)
+                .then(res => res.json())
+                .then(data => setData(data));
+        }
+    }
+
+    /*----------------------------------------------- 
+     | Checking Land Success value and display data |
+     -----------------------------------------------*/
 
     const checkLandSuccess = landStatus => {
         let status = '';
@@ -44,6 +82,10 @@ const Spacex = () => {
         return status;
     }
 
+    /*---------------------------------- 
+     | Checking year and fetching data |
+     ----------------------------------*/
+
     const yearValuePicker = yearValue => {
         setSelected(yearValue);
         fetch(`https://api.spacexdata.com/v3/launches?limit=100&launch_year=${parseInt(yearValue)}`)
@@ -51,42 +93,72 @@ const Spacex = () => {
             .then(data => setData(data));
     }
 
-    // console.log(launch);
-
     return (
         <section className="container">
             <h1>SpaceX Launch Programs</h1>
             <div className="main-content">
+
+                {/*-------------- 
+                  | Filter Area |
+                  -------------*/}
+
                 <div className="filter">
                     <h2>Filters</h2>
                     <p className="border-bottom">Launch Year</p>
                     <div className="btn-wraper">
                         <div className="btn-grid">
+
+                            {/*--------------------- 
+                              | Launch Year Button |
+                              --------------------*/}
                             {
                                 years.map(yearBtn => <button className={
                                     selected === yearBtn
                                         ? "active-color"
                                         : "non-active-color"
-                                } onClick={() => yearValuePicker(yearBtn)}>{yearBtn}</button>)
+                                } onClick={() => { yearValuePicker(yearBtn) }}>{yearBtn}</button>)
                             }
                         </div>
                     </div>
                     <p className="border-bottom">Successfull Launch</p>
                     <div className="btn-wraper">
                         <div className="btn-set">
-                            <button onClick={() => launchTrueFalse(this.value)}>True</button>
-                            <button>False</button>
+
+                            {/*--------------------------- 
+                              | Successful Launch Button |
+                              ---------------------------*/}
+
+                            <button className={
+                                launch === true ? "active-color" : "non-active-color"
+                            } onClick={() => launchTrueFalse(true)}>True</button>
+                            <button className={
+                                launch === false ? "active-color" : "non-active-color"
+                            } onClick={() => launchTrueFalse(false)}>False</button>
                         </div>
                     </div>
                     <p className="border-bottom">Successfull Landing</p>
                     <div className="btn-wraper">
                         <div className="btn-set">
-                            <button>True</button>
-                            <button>False</button>
+
+                            {/*------------------------- 
+                              | Successful Land Button |
+                              ------------------------*/}
+
+                            <button className={
+                                land === true ? "active-color" : "non-active-color"
+                            } onClick={() => landTrueFalse(true)}>True</button>
+                            <button className={
+                                land === false ? "active-color" : "non-active-color"
+                            } onClick={() => landTrueFalse(false)}>False</button>
                         </div>
                     </div>
                 </div>
                 <div className="card-body">
+
+                    {/*----------------------------- 
+                      | Card area and data display |
+                      ----------------------------*/}
+
                     {
                         data.map(launch => <div className="card">
                             <img className="img" src={launch?.links?.mission_patch_small} alt="" />
