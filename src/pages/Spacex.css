@@ -92,6 +92,8 @@
  | Responsibility |
  -----------------*/
 
+ /* Phone */
+
 @media screen and (max-width:700px){
 .main-content{
     flex-direction: column;
@@ -113,6 +115,8 @@
     grid-column-gap: 0px;
 }
 }
+
+/* Tab */
 
 @media screen and (max-width:1023px) and (min-width:701px){
 
